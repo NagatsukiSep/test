@@ -8,6 +8,11 @@ import (
 
 func CreateRecipe(c echo.Context) error {
 	recipe := model.Recipe{}
+	if c.Bind(&recipe) == nil {
+		return c.JSON(200, map[string]string{
+			"message":  "Recipe creation failed!",
+			"required": "title, making_time, serves, ingredients, cost"})
+	}
 	if err := c.Bind(&recipe); err != nil {
 		print(err)
 		return c.JSON(200, map[string]string{
@@ -37,7 +42,7 @@ func GetRecipe(c echo.Context) error {
 	}
 	return c.JSON(200, map[string]interface{}{
 		"message": "Recipe details by id",
-		"recipe":  recipe,
+		"recipe":  []model.Recipe{recipe},
 	})
 }
 
