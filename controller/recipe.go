@@ -8,17 +8,17 @@ import (
 
 func CreateRecipe(c echo.Context) error {
 	recipe := model.Recipe{}
-	if c.Bind(&recipe) == nil {
-		return c.JSON(200, map[string]string{
-			"message":  "Recipe creation failed!",
-			"required": "title, making_time, serves, ingredients, cost"})
-	}
 	if err := c.Bind(&recipe); err != nil {
-		print(err)
 		return c.JSON(200, map[string]string{
 			"message":  "Recipe creation failed!",
 			"required": "title, making_time, serves, ingredients, cost"})
 	}
+	if recipe.Title == "" || recipe.MakingTime == "" || recipe.Serves == "" || recipe.Ingredients == "" || recipe.Cost == 0 {
+		return c.JSON(200, map[string]string{
+			"message":  "Recipe creation failed!",
+			"required": "title, making_time, serves, ingredients, cost"})
+	}
+
 	model.DB.Create(&recipe)
 	return c.JSON(200, map[string]interface{}{
 		"message": "Recipe successfully created!",
